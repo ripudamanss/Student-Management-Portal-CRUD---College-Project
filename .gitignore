@@ -1,0 +1,46 @@
+# 🔐 Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 🔧 Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# 🧠 VS Code / IDE
+.vscode/
+.idea/
+*.swp
+
+# 📦 Build / dist
+build/
+dist/
+*.egg-info/
+
+# 🗃️ Database (IMPORTANT)
+database.db
+
+# 📁 Uploaded files (optional)
+static/uploads/
+
+# 📄 Logs
+*.log
+
+# 🔑 Environment variables
+.env
+
+# 🧾 CSV / PDF exports
+*.csv
+*.pdf
+
+# 🧪 Testing
+.pytest_cache/
+
+# 🪟 OS files
+.DS_Store
+Thumbs.db
+
+# 🔒 Secrets
+instance/

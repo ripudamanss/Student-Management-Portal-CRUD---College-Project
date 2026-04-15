@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 220px;
+            position: fixed;
+            background: #111;
+            padding-top: 20px;
+            color: white;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #ccc;
+            padding: 12px 20px;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background: #222;
+            color: white;
+        }
+
+        .main {
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        .card {
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.7s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        img {
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body class="bg-light" id="body">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h4 class="text-center">ADMIN</h4>
+
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/add">➕ Add Student</a>
+        <a href="/export">📁 Export CSV</a>
+        <a href="/export_pdf">📄 Export PDF</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- TOP BAR -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3>Dashboard</h3>
+                <small>Welcome, {{session['user']}} ({{session['role']}})</small>
+            </div>
+
+            <!-- TIMER -->
+            <div id="sessionTimer" class="timer-box">
+                ⏳ 10:00
+            </div>
+
+            <button onclick="toggleMode()" class="btn btn-dark">🌙</button>
+        </div>
+
+        <!-- ALERT -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-success">{{messages[0]}}</div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- 📢 ADD ANNOUNCEMENT -->
+        {% if session['role'] == 'admin' %}
+        <div class="card p-3 mb-3 fade-in">
+            <h5>📢 Add Announcement</h5>
+            <form method="POST" action="/add_announcement">
+                <input class="form-control mb-2" name="message" placeholder="Enter announcement..." required>
+                <button class="btn btn-success">Post</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- 📢 ANNOUNCEMENTS -->
+        <div class="card p-3 mb-4 fade-in">
+            <h5>📢 Announcements</h5>
+
+            {% for a in announcements %}
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <div>
+                    {{a[1]}} <br>
+                    <small>{{a[2]}}</small>
+                </div>
+
+                {% if session['role'] == 'admin' %}
+                <a href="/delete_announcement/{{a[0]}}" class="btn btn-danger btn-sm">Delete</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- 📊 CARDS -->
+        <div class="row g-3 mb-4 fade-in">
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h6>Total</h6>
+                    <h3>{{total}}</h3>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h6>Avg Age</h6>
+                    <h3>{{avg_age}}</h3>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h6>Top Course</h6>
+                    <h3>{{top_course}}</h3>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card p-3">
+                    <h6>Favorites ⭐</h6>
+                    <h3>{{favorites}}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="position-relative mb-3">
+            <input id="searchBox" class="form-control" placeholder="Search student...">
+            <div id="suggestions" class="list-group position-absolute w-100"></div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="card p-3 fade-in">
+            <table class="table align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Course</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for s in students %}
+                    <tr>
+                        <td>
+                            <img src="/static/uploads/{{s[5]}}" width="45" height="45">
+                        </td>
+
+                        <td>
+                            <a href="/student/{{s[0]}}" class="fw-bold text-decoration-none">
+                                {{s[1]}}
+                            </a>
+                        </td>
+
+                        <td>{{s[2]}}</td>
+                        <td><span class="badge bg-info">{{s[3]}}</span></td>
+
+                        <td>
+                            <a href="/favorite/{{s[0]}}" class="btn btn-warning btn-sm">⭐</a>
+
+                            {% if session['role'] != 'student' %}
+                            <a href="/edit/{{s[0]}}" class="btn btn-primary btn-sm">✏️</a>
+                            {% endif %}
+
+                            {% if session['role'] == 'admin' %}
+                            <a href="/delete/{{s[0]}}" class="btn btn-danger btn-sm">🗑️</a>
+                            {% endif %}
+
+                            <a href="/qr/{{s[0]}}" class="btn btn-info btn-sm">QR</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- CHART -->
+        <div class="card p-3 mt-4 fade-in">
+            <canvas id="chart"></canvas>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script id="students-data" type="application/json">
+{{ students | tojson | safe }}
+</script>
+
+    <script>
+        let SESSION_LIMIT = 600; // 10 min
+        let WARNING_TIME = 60;
+
+        let lastActivity = Date.now();
+        let warned = false;
+        let idleThreshold = 10000; // 10 sec idle → show timer
+
+        let timerBox = document.getElementById("sessionTimer");
+
+        function updateTimer() {
+            let now = Date.now();
+            let elapsed = Math.floor((now - lastActivity) / 1000);
+            let remaining = SESSION_LIMIT - elapsed;
+
+            if (remaining < 0) remaining = 0;
+
+            let min = Math.floor(remaining / 60);
+            let sec = remaining % 60;
+
+            timerBox.innerHTML =
+                `⏳ ${min}:${sec < 10 ? '0' : ''}${sec}`;
+
+            // 🎨 color change
+            if (remaining <= 60) {
+                timerBox.classList.add("timer-danger");
+            } else if (remaining <= 180) {
+                timerBox.classList.add("timer-warning");
+            } else {
+                timerBox.classList.remove("timer-warning", "timer-danger");
+            }
+
+            // ⚠️ warning
+            if (remaining === WARNING_TIME && !warned) {
+                warned = true;
+                showWarning();
+            }
+
+            // ⛔ logout
+            if (remaining <= 0) {
+                window.location.href = "/logout";
+            }
+        }
+
+        // 🧠 Detect idle → show timer
+        function checkIdle() {
+            let now = Date.now();
+            let idleTime = now - lastActivity;
+
+            if (idleTime > idleThreshold) {
+                timerBox.style.display = "block";
+            } else {
+                timerBox.style.display = "none";
+            }
+        }
+
+        // 🔄 track activity
+        function trackActivity() {
+            lastActivity = Date.now();
+            warned = false;
+        }
+
+        // events
+        ["click", "mousemove", "keypress"].forEach(evt => {
+            document.addEventListener(evt, trackActivity);
+        });
+
+        // loops
+        setInterval(updateTimer, 1000);
+        setInterval(checkIdle, 1000);
+    </script>
+
+    <script>
+        let courses = {};
+        const studentsData = JSON.parse(document.getElementById("students-data").textContent || "[]");
+
+        studentsData.forEach(s => {
+            courses[s[3]] = (courses[s[3]] || 0) + 1;
+        });
+
+        new Chart(document.getElementById("chart"), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(courses),
+                datasets: [{
+                    data: Object.values(courses)
+                }]
+            }
+        });
+
+        function toggleMode() {
+            document.body.classList.toggle("bg-dark");
+            document.body.classList.toggle("text-white");
+        }
+
+        const searchBox = document.getElementById("searchBox");
+        const suggestions = document.getElementById("suggestions");
+
+        searchBox.addEventListener("keyup", function () {
+            let query = this.value;
+
+            if (query.length < 2) {
+                suggestions.innerHTML = "";
+                return;
+            }
+
+            fetch(`/search_suggestions?q=${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    suggestions.innerHTML = "";
+
+                    data.data.forEach(item => {
+                        let div = document.createElement("a");
+                        div.className = "list-group-item list-group-item-action";
+                        div.innerText = item[1];
+
+                        div.onclick = () => {
+                            window.location.href = `/student/${item[0]}`;
+                        };
+
+                        suggestions.appendChild(div);
+                    });
+                });
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<link rel="icon" href="/src/favicon.png" type="image/png">
+
+<head>
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            width: 360px;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.7s ease;
+            color: white;
+        }
+
+        .login-card:hover {
+            transform: scale(1.02);
+            transition: 0.3s;
+        }
+
+        input,
+        select {
+            border-radius: 10px !important;
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        input::placeholder {
+            color: #ddd;
+        }
+
+        .btn {
+            border-radius: 10px;
+        }
+
+        .role-icons span {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            margin: 4px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: 0.2s;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 14px;
+        }
+
+        .role-icons span div {
+            font-size: 13px;
+            margin-top: 2px;
+        }
+
+        .role-icons span:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .active-role {
+            background: #0d6efd !important;
+        }
+
+        .error-box {
+            display: none;
+            background: rgba(255, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card text-center">
+
+        <h3 class="mb-3">🔐 Login</h3>
+
+        <!-- ❌ ERROR MESSAGE -->
+        {% if error %}
+        <div class="error-box" style="display:block;">
+            {{error}}
+        </div>
+        {% endif %}
+
+        <!-- Role -->
+        <div class="role-icons mb-3 d-flex justify-content-between">
+
+            <span onclick="setRole('admin', this)">
+                👨‍💼 <div>Admin</div>
+            </span>
+
+            <span onclick="setRole('faculty', this)">
+                👨‍🏫 <div>Faculty</div>
+            </span>
+
+            <span onclick="setRole('student', this)">
+                🎓 <div>Student</div>
+            </span>
+
+        </div>
+
+        <!-- QUICK DEMO BUTTONS -->
+        <div class="mb-3">
+            <button class="btn btn-sm btn-light" onclick="fillDemo('admin')">Demo Admin</button>
+            <button class="btn btn-sm btn-light" onclick="fillDemo('student')">Demo Student</button>
+        </div>
+
+        <form method="POST" onsubmit="showLoading()">
+            <input type="hidden" name="role" id="role">
+
+            <input class="form-control mb-3" name="username" id="username" placeholder="Username" required>
+
+            <div class="position-relative">
+                <input class="form-control mb-3" type="password" name="password" id="password" placeholder="Password"
+                    required>
+                <span id="eyeIcon" onclick="togglePassword()"
+                    style="position:absolute; right:10px; top:8px; cursor:pointer;">🙈</span>
+            </div>
+
+            <button id="loginBtn" class="btn btn-light w-100">
+                Login
+            </button>
+        </form>
+
+    </div>
+
+    <script>
+        function setRole(role, el) {
+            document.getElementById("role").value = role;
+
+            document.querySelectorAll(".role-icons span").forEach(s => {
+                s.classList.remove("active-role");
+            });
+
+            el.classList.add("active-role");
+        }
+
+        function togglePassword() {
+            let p = document.getElementById("password");
+            let icon = document.getElementById("eyeIcon");
+
+            if (p.type === "password") {
+                p.type = "text";
+                icon.innerHTML = "👁️";
+            } else {
+                p.type = "password";
+                icon.innerHTML = "🙈";
+            }
+        }
+        function showLoading() {
+            let btn = document.getElementById("loginBtn");
+            btn.innerHTML = "⏳ Logging in...";
+            btn.disabled = true;
+        }
+
+        function fillDemo(type) {
+            if (type === "admin") {
+                document.getElementById("username").value = "admin";
+                document.getElementById("password").value = "admin";
+                setRole('admin', document.querySelectorAll(".role-icons span")[0]);
+            }
+
+            if (type === "student") {
+                document.getElementById("username").value = "stu101";
+                document.getElementById("password").value = "1234";
+                setRole('student', document.querySelectorAll(".role-icons span")[2]);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
