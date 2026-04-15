@@ -1,0 +1,7 @@
+To start this project - 
+first of all install all requirements 
+by typing following cmd command in terminal - pip install -r requirements.txt
+
+and after all installation 
+run python app.py - to run flask server 
+

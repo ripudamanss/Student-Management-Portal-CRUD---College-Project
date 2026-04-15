@@ -1,0 +1,108 @@
+/* GLOBAL */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    transition: all 0.3s ease;
+}
+
+/* DARK MODE */
+.dark-mode {
+    background: #121212 !important;
+    color: white !important;
+}
+
+/* CARDS */
+.card {
+    border-radius: 15px;
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover animation */
+.card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+}
+
+/* TABLE */
+.table tr {
+    transition: 0.2s ease;
+}
+
+.table tr:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* BUTTONS */
+.btn {
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+/* PROFILE IMAGE */
+img {
+    transition: 0.3s ease;
+}
+
+img:hover {
+    transform: scale(1.2);
+}
+
+/* GLASS EFFECT */
+.glass {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+}
+
+/* FADE IN ANIMATION */
+.fade-in {
+    animation: fadeIn 0.8s ease-in;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* SLIDE IN */
+.slide-in {
+    animation: slideIn 0.6s ease;
+}
+
+@keyframes slideIn {
+    from {transform: translateX(-50px); opacity:0;}
+    to {transform: translateX(0); opacity:1;}
+}
+
+/* SEARCH DROPDOWN */
+#suggestions {
+    z-index: 1000;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.timer-box {
+    background: linear-gradient(135deg, #000, #333);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    min-width: 70px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
+
+/* Warning color */
+.timer-warning {
+    background: linear-gradient(135deg, #ff9800, #ff5722);
+}
+
+/* Danger color */
+.timer-danger {
+    background: linear-gradient(135deg, #f44336, #b71c1c);
+}
