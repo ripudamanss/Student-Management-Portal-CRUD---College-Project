@@ -29,7 +29,7 @@ static/uploads/
 *.log
 
 # 🔑 Environment variables
-.env
+# .env  ignored for security, but you can create a .env.example with placeholders
 
 # 🧾 CSV / PDF exports
 *.csv

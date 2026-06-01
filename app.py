@@ -7,6 +7,9 @@ import os
 from werkzeug.utils import secure_filename
 from reportlab.platypus import SimpleDocTemplate, Table
 import qrcode
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 def session_timeout():
@@ -27,7 +30,7 @@ def session_timeout():
 
     session["last_activity"] = now
 
-app.secret_key = "secret123"
+app.secret_key = os.getenv("secret_key")
 # app.permanent_session_lifetime = timedelta(minutes=10) #AutoLogout after 10 minutes
 
 
