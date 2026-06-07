@@ -55,7 +55,7 @@ This system allows admins to manage student records and announcements, while stu
 
 ## 🖥️ Screenshots
 
-> Add your screenshots here 👇
+> Screenshot Not Added , It will Be added Later
 
 - Login Page  
 - Admin Dashboard  
